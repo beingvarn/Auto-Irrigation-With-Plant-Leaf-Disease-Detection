@@ -1,0 +1,68 @@
+ #include <LiquidCrystal.h>
+
+int rs=13;
+int enable=11;
+int db4=5;
+int db5=4;
+int db6=3;
+int db7=2;
+LiquidCrystal lcd(rs,enable,db4,db5,db6,db7);
+float temp;
+int soil;
+int buzz=7;
+int motor=9;
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  lcd.setCursor(4,0);
+  lcd.print("Auto");
+  lcd.setCursor(5,4);
+  lcd.print("Irrigation");
+  delay(2000);
+  lcd.clear();
+  pinMode(A0,INPUT);
+  pinMode(A1,INPUT);
+  pinMode(buzz,OUTPUT);
+  
+}
+
+void loop()
+{
+  
+   temp=analogRead(A0);
+   soil=analogRead(A1);
+   temp= (temp * 0.48828125-50);
+  Serial.print("Temperature = ");
+  Serial.print(temp);
+  Serial.print("'C");
+  lcd.setCursor(0,0);
+  lcd.print("TEMP:");
+  lcd.print(temp);
+  lcd.print("'C");
+  lcd.setCursor(0,1);
+  lcd.print("MOISTURE: ");
+  lcd.print(soil);
+  delay(3000);
+   if(soil<500 && temp>23)
+   {
+     digitalWrite(7,HIGH);
+     lcd.setCursor(0,0);
+     digitalWrite(buzz,HIGH);
+     tone(buzz,392);
+     lcd.print("WATER NEEDED!!!");
+     delay(3000);
+     digitalWrite(motor,HIGH);
+   }
+  else
+  {
+    digitalWrite(7,LOW);
+    noTone(buzz);
+    digitalWrite(motor,LOW);
+    
+  }
+ 
+   delay(1000);
+}
+
